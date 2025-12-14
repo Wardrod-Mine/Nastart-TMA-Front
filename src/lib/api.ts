@@ -1,20 +1,24 @@
 import { retrieveLaunchParams } from "@telegram-apps/sdk-react"
 
-const BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "")
+const raw = import.meta.env.VITE_API_BASE_URL
+// если env не подставился — работаем через относительный /api
+const BASE_URL = (raw && raw.trim() ? raw : "/api").replace(/\/$/, "")
+
+function join(base: string, path: string) {
+  if (!path) return base
+  if (/^https?:\/\//i.test(path)) return path
+  if (path.startsWith("/")) return `${base}${path}`
+  return `${base}/${path}`
+}
 
 async function fetchAPI(
   path: string,
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
   body?: unknown
 ) {
-  if (!BASE_URL) {
-    console.warn("VITE_API_BASE_URL пустой — запрос отменён:", path)
-    return null
-  }
-
   const { initDataRaw } = retrieveLaunchParams()
 
-  const url = `${BASE_URL}${path.startsWith("/") ? "" : "/"}${path}`
+  const url = join(BASE_URL, path)
   const response = await fetch(url, {
     method,
     headers: {
