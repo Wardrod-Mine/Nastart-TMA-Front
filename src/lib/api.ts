@@ -1,35 +1,53 @@
 import { retrieveLaunchParams } from "@telegram-apps/sdk-react"
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL
+const BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "")
 
 async function fetchAPI(
-  url: string,
+  path: string,
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
-  body?: any
+  body?: unknown
 ) {
+  if (!BASE_URL) {
+    console.warn("VITE_API_BASE_URL пустой — запрос отменён:", path)
+    return null
+  }
+
   const { initDataRaw } = retrieveLaunchParams()
 
-  const options: RequestInit = {
-    method: method,
+  const url = `${BASE_URL}${path.startsWith("/") ? "" : "/"}${path}`
+  const response = await fetch(url, {
+    method,
     headers: {
       "Content-Type": "application/json",
       Authorization: `tma ${initDataRaw}`,
     },
-  }
-  if (body) {
-    options.body = JSON.stringify(body)
-  }
-  const response = await fetch(BASE_URL + url, options)
+    body: body ? JSON.stringify(body) : undefined,
+  })
+
+  const contentType = response.headers.get("content-type") || ""
+  const text = await response.text()
+
   if (!response.ok) {
     if (response.status === 422) {
       throw { type: "validation" }
     }
+    throw new Error(`${response.status} ${response.statusText}: ${text.slice(0, 200)}`)
   }
-  return response.json()
+
+  if (!contentType.includes("application/json")) {
+    return null
+  }
+
+  return text ? JSON.parse(text) : null
 }
 
 export async function visit() {
-  await fetchAPI("/metrics/visit", "POST")
+  try {
+    await fetchAPI("/metrics/visit", "POST")
+  } catch (e) {
+    // Метрика некритична — не ломаем основной поток
+    console.debug("metrics/visit skipped:", e)
+  }
 }
 
 export const getItems = async () => {
