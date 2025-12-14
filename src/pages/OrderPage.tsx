@@ -1,5 +1,5 @@
 import useBackButton from "@/hooks/useBackButton"
-import { getOrder } from "@/lib/api"
+import { getOrder, resolveImageUrl } from "@/lib/api"
 import { useCart } from "@/providers/CartProvider"
 import { mainButton } from "@telegram-apps/sdk-react"
 import {
@@ -113,7 +113,7 @@ export default function OrderPage() {
                 <div className="pr-2 pressable shadow flex items-center justify-between bg-[var(--tg-theme-section-bg-color)] rounded-xl w-full">
                   <div className="flex items-center gap-3 flex-1">
                     <img
-                      src={orderItem.item.images[0]?.url}
+                      src={resolveImageUrl(orderItem.item.images[0]?.url)}
                       className="rounded-xl object-cover h-20 w-20 shrink-0"
                     />
                     <div className="flex flex-col max-w-52 min-w-0">

@@ -8,6 +8,7 @@ import { CartItem } from "../types/CartItem"
 import { formatPrice, getPriceString } from "@/lib/utils"
 import { hapticFeedbackImpactOccurred } from "@telegram-apps/sdk-react"
 import { PiBasketBold } from "react-icons/pi"
+import { resolveImageUrl } from "@/lib/api"
 
 export default function ItemCard({ item }: { item: Item }) {
   const { cart } = useCart()
@@ -26,7 +27,7 @@ export default function ItemCard({ item }: { item: Item }) {
       >
         <img
           alt={item.name}
-          src={item.images[0].url}
+          src={resolveImageUrl(item.images[0]?.url)}
           className="aspect-square w-full object-cover object-center"
         />
         <div className="pb-2 pt-2 text-center flex-grow px-2">

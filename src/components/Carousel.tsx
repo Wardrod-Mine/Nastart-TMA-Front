@@ -1,7 +1,8 @@
 import useEmblaCarousel from "embla-carousel-react"
-import { Thumb } from "./CarouselThumb"
 import { useCallback, useEffect, useState } from "react"
 import { Image } from "@/types/Item"
+import { resolveImageUrl } from "@/lib/api"
+import { Thumb } from "./CarouselThumb"
 
 export default function Carousel({ slides }: { slides: Image[] }) {
   const [emblaRef, emblaApi] = useEmblaCarousel()
@@ -43,7 +44,7 @@ export default function Carousel({ slides }: { slides: Image[] }) {
               key={index}
             >
               <img
-                src={image.url}
+                src={resolveImageUrl(image.url)}
                 className="w-full aspect-square object-cover object-center rounded-xl"
                 alt="Фото товара"
               />
