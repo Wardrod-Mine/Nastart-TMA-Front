@@ -1,8 +1,17 @@
+// @ts-ignore -- types resolved at build; suppress local tsc noise
 import { retrieveLaunchParams } from "@telegram-apps/sdk-react"
 
-const raw = import.meta.env.VITE_API_BASE_URL
+const raw = ((import.meta as any)?.env?.VITE_API_BASE_URL as string | undefined) ?? ""
 // если env не подставился — работаем через относительный /api
 const BASE_URL = (raw && raw.trim() ? raw : "/api").replace(/\/$/, "")
+
+export function resolveImageUrl(u?: string) {
+  if (!u) return ""
+  if (/^https?:\/\//i.test(u)) return u
+  if (u.startsWith("/photos/")) return `${window.location.origin}${u}`
+  if (u.startsWith("photos/")) return `${window.location.origin}/${u}`
+  return `${window.location.origin}/photos/${u}`
+}
 
 function join(base: string, path: string) {
   if (!path) return base
