@@ -14,6 +14,9 @@ export default function CartItems({ cart }: { cart: CartItem[] }) {
             <div className="flex items-center gap-3 flex-1">
               <img
                 src={resolveImageUrl(item.images[0]?.url)}
+                loading="lazy"
+                decoding="async"
+                draggable={false}
                 className="rounded-xl object-cover h-20 w-20 shrink-0"
               />
               <div className="flex flex-col max-w-52 min-w-0">

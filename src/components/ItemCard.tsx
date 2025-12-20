@@ -18,44 +18,48 @@ export default function ItemCard({ item }: { item: Item }) {
 
   return (
     <div
-      className="overflow-hidden rounded-[20px] shadow-md relative pressable"
+      className="overflow-hidden rounded-[20px] shadow-md relative pressable bg-[var(--tg-theme-section-bg-color)]"
       onClick={() => hapticFeedbackImpactOccurred.ifAvailable("light")}
     >
-      <Link
-        to={`/products/${item.id}`}
-        className="bg-[var(--tg-theme-section-bg-color)] flex flex-col h-full"
-      >
+      <Link to={`/products/${item.id}`} className="flex flex-col h-full">
         <img
           alt={item.name}
           src={resolveImageUrl(item.images[0]?.url)}
+          loading="lazy"
+          decoding="async"
+          draggable={false}
           className="aspect-square w-full object-cover object-center"
         />
         <div className="pb-2 pt-2 text-center flex-grow px-2">
           <div className="font-semibold leading-5">{item.name}</div>
-          {/* <Subheadline weight="2">{item.name}</Subheadline> */}
           {(item.price || !!item.sizes) && (
-            <div className="opacity-60 text-xs mt-1">
-              {getPriceString(item)}
-            </div>
-          )}
-        </div>
-        <div className="relative m-1">
-          {isInCart ? (
-            <Button size="s" className="!rounded-2xl" mode="gray" stretched>
-              <div className="text-xs flex gap-1 items-center font-bold opacity-80">
-                <PiBasketBold size={16} />В корзине
-              </div>
-            </Button>
-          ) : (
-            <Button size="s" className="!rounded-2xl" stretched>
-              <div className="text-xs flex items-center font-bold">
-                <IoIosAdd size={24} />
-                Купить
-              </div>
-            </Button>
+            <div className="opacity-60 text-xs mt-1">{getPriceString(item)}</div>
           )}
         </div>
       </Link>
+
+      <div className="relative m-1">
+        {isInCart ? (
+          <Button
+            size="s"
+            className="!rounded-2xl"
+            mode="gray"
+            stretched
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-xs flex gap-1 items-center font-bold opacity-80">
+              <PiBasketBold size={16} />В корзине
+            </div>
+          </Button>
+        ) : (
+          <Button size="s" className="!rounded-2xl" stretched onClick={(e) => e.stopPropagation()}>
+            <div className="text-xs flex items-center font-bold">
+              <IoIosAdd size={24} />
+              Купить
+            </div>
+          </Button>
+        )}
+      </div>
     </div>
   )
 }
